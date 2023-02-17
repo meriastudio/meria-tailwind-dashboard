@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCollab</title>
+  <script defer src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js"></script>
+  <link rel="stylesheet" href="../dist/output.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* width */
+
+    #leftdiv::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    /* Track */
+
+    #leftdiv::-webkit-scrollbar-track {
+      background: #ffffff;
+    }
+
+    /* Handle */
+
+    #leftdiv::-webkit-scrollbar-thumb {
+      background: #cfcfcf;
+      border-radius: 10px;
+    }
+
+    /* width */
+
+    #centerdiv::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    /* Track */
+
+    #centerdiv::-webkit-scrollbar-track {
+      background: #ffffff;
+    }
+
+    /* Handle */
+
+    #centerdiv::-webkit-scrollbar-thumb {
+      background: #cfcfcf;
+      border-radius: 10px;
+    }
+
+    #rightdiv::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    /* Track */
+    #rightdiv::-webkit-scrollbar-track {
+      background: #eff3f6;
+    }
+
+    /* Handle */
+    #rightdiv::-webkit-scrollbar-thumb {
+      background: #cfcfcf;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="w-screen h-screen">
+    <section
+      class="max-w-[2720px] mx-auto h-full grid grid-cols-[minmax(250px,330px)_minmax(870px,_1fr)_minmax(410px,500px)]">
+      <!-- left sidenav -->
+                <div class="bg-[#EFF3F6] w-full h-full p-4 overflow-y-scroll" id="leftdiv">
+                    <img src="../assets/setting/logo.svg" alt="logo" class="mt-4" />
+                    <div class="w-full mt-8 flex flex-col gap-y-2">
+                        <button
+                            class="bg-[#2780A8] text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-white px-5"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/home.svg" alt="home" />
+                                <p>Home</p>
+                            </div>
+                            <img src="../assets/setting/right-arrow.svg" alt="right-arrow" />
+                        </button>
+                        <!-- task button -->
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/tasks.svg" alt="tasks" />
+                                <p>Tasks</p>
+                            </div>
+                            <div class="h-6 w-6 rounded-lg flex justify-center items-center bg-[#E6ECF1]">
+                                <p class="text-[#989BA3]">7</p>
+                            </div>
+                        </button>
+                        <!-- mentions button -->
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/mention.svg" alt="mentions" />
+                                <p>Mentions</p>
+                            </div>
+                            <div class="h-6 w-6 rounded-lg flex justify-center items-center bg-[#E6ECF1]">
+                                <p class="text-[#989BA3]">23</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- threads & messages -->
+                    <div class="flex flex-col gap-y-4 mt-2">
+                        <!-- threads -->
+                        <div class="flex flex-col">
+                            <div
+                                class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                            >
+                                <div class="flex items-center gap-x-2">
+                                    <img src="../assets/setting/threads.svg" alt="threads" />
+                                    <p>Threads</p>
+                                </div>
+
+                                <!-- create thread modal -->
+                                <div x-data="{ open: false }" class="flex justify-center">
+                                    <!-- Trigger -->
+                                    <button x-on:click="open = true" class="h-6 w-6 rounded-full flex justify-center items-center bg-[#2780A8]">
+                                        <p class="text-white">+</p>
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div
+                                        x-show="open"
+                                        style="display: none"
+                                        x-on:keydown.escape.prevent.stop="open = false"
+                                        role="dialog"
+                                        aria-modal="true"
+                                        x-id="['modal-title']"
+                                        :aria-labelledby="$id('modal-title')"
+                                        class="fixed inset-0 z-10 overflow-y-auto"
+                                    >
+                                        <!-- Overlay -->
+                                        <div x-show="open" x-transition.opacity class="fixed inset-0 bg-black bg-opacity-50"></div>
+
+                                        <!-- Panel -->
+                                        <div
+                                            x-show="open"
+                                            x-transition
+                                            x-on:click="open = false"
+                                            class="relative flex min-h-screen items-center justify-center p-4"
+                                        >
+                                            <div
+                                                x-on:click.stop
+                                                x-trap.noscroll.inert="open"
+                                                class="relative w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-8 shadow-lg"
+                                            >
+                                                <!-- close button -->
+                                                <div class="text-end">
+                                                    <button x-on:click="open = false">
+                                                        <img src="../assets/close.svg" alt="close" />
+                                                    </button>
+                                                </div>
+
+                                                <!-- Title -->
+                                                <h2 class="text-3xl font-poppins font-semibold text-center py-6 border-b" :id="$id('modal-title')">
+                                                    Create New Thread
+                                                </h2>
+
+                                                <!-- Content -->
+                                                <div>
+                                                    <form action="/" class="w-full py-4 space-y-4">
+                                                        <input
+                                                            type="text"
+                                                            class="w-full border font-poppins text-[15px] p-3 text-black placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                            placeholder="Thread name"
+                                                        />
+
+                                                        <select
+                                                            name="permission"
+                                                            id=""
+                                                            class="w-full border font-poppins text-[15px] p-3 placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                        >
+                                                            <option value="permission" class="text-[#AFB3B8]">Permission</option>
+                                                            <option value="yes">yes</option>
+                                                            <option value="yes">no</option>
+                                                        </select>
+
+                                                        <div class="mt-4 w-full relative">
+                                                            <input
+                                                                type="text"
+                                                                class="pr-10 w-full border font-poppins text-[15px] p-3 text-black placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                                placeholder="Add Memebers +"
+                                                            />
+                                                            <img src="../assets/setting/search.svg" alt="search" class="absolute top-2.5 right-2" />
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <!-- Buttons -->
+                                                <div class="pt-6 flex justify-center border-t space-x-3">
+                                                    <button
+                                                        type="button"
+                                                        x-on:click="open = false"
+                                                        class="rounded-md border font-poppins font-medium text-[15px] border-gray-200 bg-white px-5 py-3 flex items-center gap-x-2"
+                                                    >
+                                                        <img src="../assets/closesm.svg" alt="close" />
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        x-on:click="open = false"
+                                                        class="rounded-md border font-poppins font-medium text-[15px] bg-[#2780A8] border-gray-200 text-white px-5 py-3"
+                                                    >
+                                                        Create thread
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex px-7 w-full">
+                                <div class="w-[2px] bg-[#D7D9DC]"></div>
+                                <div class="text-sm rounded-lg font-poppins font-medium text-[#585A65] px-5 flex flex-col gap-y-2">
+                                    <button class="py-2">General</button>
+                                    <button class="py-2">Random</button>
+                                    <button class="py-2">Logistics</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- message -->
+                        <div class="flex flex-col">
+                            <div
+                                class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                            >
+                                <div class="flex items-center gap-x-2">
+                                    <img src="../assets/setting/message.svg" alt="messages" />
+                                    <p>Direct Message</p>
+                                </div>
+                                <button class="">
+                                    <img src="../assets/setting/more.svg" alt="more" />
+                                </button>
+                            </div>
+                            <div class="mt-4 flex px-7 w-full">
+                                <div class="w-[2px] bg-[#D7D9DC]"></div>
+                                <div class="text-sm rounded-lg font-poppins font-medium text-[#585A65] px-5 flex flex-col gap-y-2">
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People2.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jone doe</p>
+                                    </button>
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People1.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jane Due</p>
+                                    </button>
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People3.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jimmy Foo</p>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- setting -->
+
+                    <div class="py-2 border-t mt-12">
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/setting.svg" alt="setting" />
+                                <p>Setting</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+      <!-- center content -->
+      <div class="bg-white w-full h-full p-4 overflow-y-scroll" id="centerdiv">
+        <!-- search -->
+        <div class="mt-2 space-y-4 border-b">
+          <label for="search" class="relative">
+            <img src="../assets/setting/search.svg" alt="search" class="absolute top-0 left-4" />
+            <input type="search" placeholder="Search"
+              class="px-12 py-3 font-poppins bg-[#EFF3F6] w-[33.75rem] focus:outline-none rounded-xl" />
+          </label>
+
+          <h1 class="text-2xl font-poppins font-semibold pb-4">Settings</h1>
+        </div>
+
+        <!-- notifications -->
+        <div class="flex py-8 border-b border-[#EBEFF2]">
+          <!-- left content -->
+          <div class="py-4 pr-2 w-[35%] space-y-2">
+            <h3 class="font-poppins font-semibold text-[#585A65]">
+              Notifications
+            </h3>
+            <p class="font-poppins text-[15px] text-[#585A65]">
+              Choose how you want to be notified when a task is due or someone
+              mention you
+            </p>
+          </div>
+          <!-- right content -->
+          <div class="p-4 w-[65%] border border-[#EBEFF2] rounded-2xl space-y-2">
+            <h3 class="font-poppins text-[15px] text-[#585A65] font-semibold">
+              Notifications settings
+            </h3>
+            <!-- email notification -->
+            <div class="space-y-7 pb-4 border-b border-[#EBEFF2]">
+              <p class="font-poppins text-[15px] text-[#585A65]">
+                Email Notification
+              </p>
+              <!-- toggle group -->
+              <div class="space-y-5">
+                <!-- toggle 1 -->
+                <div class="flex gap-x-2">
+                  <!-- toggle button -->
+                  <div x-data="{ value: false }" class="" x-id="['toggle-label']">
+                    <input type="hidden" name="sendNotifications" :value="value" />
+
+                    <!-- Label -->
+                    <!-- <label
+                    @click="$refs.toggle.click(); $refs.toggle.focus()"
+                    :id="$id('toggle-label')"
+                    class="text-gray-900 font-medium"
+                  >
+                    Send notifications
+                  </label> -->
+
+                    <!-- Button -->
+                    <button x-ref="toggle" @click="value = ! value" type="button" role="switch" :aria-checked="value"
+                      :aria-labelledby="$id('toggle-label')" :class="value ? 'bg-[#2780A8]' : 'bg-[#E3E6EA]'"
+                      class="relative inline-flex w-14 p-[2px] rounded-full transition">
+                      <span :class="value ? 'translate-x-8' : 'translate-x-0'"
+                        class="bg-white h-5 w-5 rounded-full transition shadow-md" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                  <div class="space-y-1">
+                    <h3 class="font-poppins text-sm text-[#585A65] font-semibold">
+                      Recive an email every time someone mentio you
+                    </h3>
+                    <p class="font-poppins text-[13px] text-[#585A65]">
+                      This will make that you never miss out
+                    </p>
+                  </div>
+                </div>
+                <!-- toggle 2 -->
+                <div class="flex gap-x-2">
+                  <!-- toggle button -->
+                  <div x-data="{ value: false }" class="" x-id="['toggle-label']">
+                    <input type="hidden" name="sendNotifications" :value="value" />
+
+                    <!-- Label -->
+                    <!-- <label
+                    @click="$refs.toggle.click(); $refs.toggle.focus()"
+                    :id="$id('toggle-label')"
+                    class="text-gray-900 font-medium"
+                  >
+                    Send notifications
+                  </label> -->
+
+                    <!-- Button -->
+                    <button x-ref="toggle" @click="value = ! value" type="button" role="switch" :aria-checked="value"
+                      :aria-labelledby="$id('toggle-label')" :class="value ? 'bg-[#2780A8]' : 'bg-[#E3E6EA]'"
+                      class="relative inline-flex w-14 p-[2px] rounded-full transition">
+                      <span :class="value ? 'translate-x-8' : 'translate-x-0'"
+                        class="bg-white h-5 w-5 rounded-full transition shadow-md" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                  <div class="space-y-1">
+                    <h3 class="font-poppins text-sm text-[#585A65] font-semibold">
+                      Recive an email when a task is due in less then 24 hours
+                    </h3>
+                    <p class="font-poppins text-[13px] text-[#585A65]">
+                      you will not recive emails of tasks that are marked as
+                      complete
+                    </p>
+                  </div>
+                </div>
+                <!-- toogle 3 -->
+                <div class="flex gap-x-2">
+                  <!-- toggle button -->
+                  <div x-data="{ value: false }" class="" x-id="['toggle-label']">
+                    <input type="hidden" name="sendNotifications" :value="value" />
+
+                    <!-- Label -->
+                    <!-- <label
+                    @click="$refs.toggle.click(); $refs.toggle.focus()"
+                    :id="$id('toggle-label')"
+                    class="text-gray-900 font-medium"
+                  >
+                    Send notifications
+                  </label> -->
+
+                    <!-- Button -->
+                    <button x-ref="toggle" @click="value = ! value" type="button" role="switch" :aria-checked="value"
+                      :aria-labelledby="$id('toggle-label')" :class="value ? 'bg-[#2780A8]' : 'bg-[#E3E6EA]'"
+                      class="relative inline-flex w-14 p-[2px] rounded-full transition">
+                      <span :class="value ? 'translate-x-8' : 'translate-x-0'"
+                        class="bg-white h-5 w-5 rounded-full transition shadow-md" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                  <div class="space-y-1">
+                    <h3 class="font-poppins text-sm text-[#585A65] font-semibold">
+                      Resive an email on every direct message sent to you
+                    </h3>
+                    <p class="font-poppins text-[13px] text-[#585A65]">
+                      Email is sent 20 minutes after the message is reciced if
+                      it is still unread
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- push notifications -->
+            <div class="space-y-7 pb-4">
+              <p class="font-poppins text-[15px] text-[#585A65]">
+                Push Notifications
+              </p>
+              <!-- toggle group -->
+              <div class="space-y-5">
+                <!-- toggle 1 -->
+                <div class="flex gap-x-2">
+                  <!-- toggle button -->
+                  <div x-data="{ value: false }" class="" x-id="['toggle-label']">
+                    <input type="hidden" name="sendNotifications" :value="value" />
+
+                    <!-- Label -->
+                    <!-- <label
+                    @click="$refs.toggle.click(); $refs.toggle.focus()"
+                    :id="$id('toggle-label')"
+                    class="text-gray-900 font-medium"
+                  >
+                    Send notifications
+                  </label> -->
+
+                    <!-- Button -->
+                    <button x-ref="toggle" @click="value = ! value" type="button" role="switch" :aria-checked="value"
+                      :aria-labelledby="$id('toggle-label')" :class="value ? 'bg-[#2780A8]' : 'bg-[#E3E6EA]'"
+                      class="relative inline-flex w-14 p-[2px] rounded-full transition">
+                      <span :class="value ? 'translate-x-8' : 'translate-x-0'"
+                        class="bg-white h-5 w-5 rounded-full transition shadow-md" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                  <div class="space-y-1">
+                    <h3 class="font-poppins text-sm text-[#585A65] font-semibold">
+                      Get push notifications every time someone mention you
+                    </h3>
+                    <p class="font-poppins text-[13px] text-[#585A65]">
+                      This will make sure that you never miss out
+                    </p>
+                  </div>
+                </div>
+                <!-- toggle 2 -->
+                <div class="flex gap-x-2">
+                  <!-- toggle button -->
+                  <div x-data="{ value: false }" class="" x-id="['toggle-label']">
+                    <input type="hidden" name="sendNotifications" :value="value" />
+
+                    <!-- Label -->
+                    <!-- <label
+                    @click="$refs.toggle.click(); $refs.toggle.focus()"
+                    :id="$id('toggle-label')"
+                    class="text-gray-900 font-medium"
+                  >
+                    Send notifications
+                  </label> -->
+
+                    <!-- Button -->
+                    <button x-ref="toggle" @click="value = ! value" type="button" role="switch" :aria-checked="value"
+                      :aria-labelledby="$id('toggle-label')" :class="value ? 'bg-[#2780A8]' : 'bg-[#E3E6EA]'"
+                      class="relative inline-flex w-14 p-[2px] rounded-full transition">
+                      <span :class="value ? 'translate-x-8' : 'translate-x-0'"
+                        class="bg-white h-5 w-5 rounded-full transition shadow-md" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                  <div class="space-y-1">
+                    <h3 class="font-poppins text-sm text-[#585A65] font-semibold">
+                      Get push notifications when a task is due is less then
+                      24 hours
+                    </h3>
+                    <p class="font-poppins text-[13px] text-[#585A65]">
+                      you will not recive push notifications of tasks that are
+                      marked as completed.
+                    </p>
+                  </div>
+                </div>
+                <!-- toogle 3 -->
+                <div class="flex gap-x-2">
+                  <!-- toggle button -->
+                  <div x-data="{ value: false }" class="" x-id="['toggle-label']">
+                    <input type="hidden" name="sendNotifications" :value="value" />
+
+                    <!-- Label -->
+                    <!-- <label
+                    @click="$refs.toggle.click(); $refs.toggle.focus()"
+                    :id="$id('toggle-label')"
+                    class="text-gray-900 font-medium"
+                  >
+                    Send notifications
+                  </label> -->
+
+                    <!-- Button -->
+                    <button x-ref="toggle" @click="value = ! value" type="button" role="switch" :aria-checked="value"
+                      :aria-labelledby="$id('toggle-label')" :class="value ? 'bg-[#2780A8]' : 'bg-[#E3E6EA]'"
+                      class="relative inline-flex w-14 p-[2px] rounded-full transition">
+                      <span :class="value ? 'translate-x-8' : 'translate-x-0'"
+                        class="bg-white h-5 w-5 rounded-full transition shadow-md" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                  <div class="space-y-1">
+                    <h3 class="font-poppins text-sm text-[#585A65] font-semibold">
+                      Get push notifications on every direct message sent to
+                      you
+                    </h3>
+                    <p class="font-poppins text-[13px] text-[#585A65]">
+                      You will get a push notification immediately
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- manage staff -->
+        <div class="flex py-8 border-b border-[#EBEFF2]">
+          <!-- left content -->
+          <div class="py-4 pr-2 w-[35%] space-y-2 mt-4">
+            <h3 class="font-poppins font-semibold text-[#585A65]">
+              Manage staff
+            </h3>
+            <p class="font-poppins text-[15px] text-[#585A65]">
+              Add or remove staf and admin member. admin memebers have access
+              to add staff and teams.
+            </p>
+          </div>
+          <!-- right content -->
+          <div class="w-[65%] border border-[#EBEFF2] rounded-2xl space-y-2">
+            <div class="flex items-center justify-between p-4">
+              <h1 class="font-poppins font-semibold text-[#585A65]">
+                Staff accounts
+              </h1>
+              <!-- button group -->
+              <div class="flex gap-x-3">
+                <button class="bg-[#EFF3F6] text-[#2780A8] font-poppins font-medium text-[15px] px-5 py-3 rounded-md">
+                  Add admin
+                </button>
+                <button class="bg-[#2780A8] text-white font-poppins font-medium text-[15px] px-5 py-3 rounded-md">
+                  Add account
+                </button>
+              </div>
+            </div>
+            <!-- staff rows -->
+            <div class="space-y-2 overflow-hidden rounded-b-2xl">
+              <div
+                class="flex items-center w-full gap-x-2 py-4 hover:bg-gradient-to-l from-[#E7EEF3] via-[#e7eee942] to-[#E7EEF3] p-4">
+                <img src="../assets/setting/People1.png" alt="avatar" class="w-10 h-10 rounded-full" />
+                <div class="w-full flex justify-between items-center">
+                  <div>
+                    <h1 class="font-poppins font-semibold text-[#585A65]">
+                      John Doe
+                    </h1>
+                    <p class="font-poppins text-sm text-[#585A65]">
+                      Decatur, USA
+                    </p>
+                  </div>
+                  <button class="h-12 w-12 rounded-full flex items-center justify-center border bg-white">
+                    <img src="../assets/setting/delete.svg" alt="delete" />
+                  </button>
+                </div>
+              </div>
+              <div
+                class="flex items-center w-full gap-x-2 py-4 hover:bg-gradient-to-l from-[#E7EEF3] via-[#e7eee942] to-[#E7EEF3] p-4">
+                <img src="../assets/setting/People2.png" alt="avatar" class="w-10 h-10 rounded-full" />
+                <div class="w-full flex justify-between items-center">
+                  <div>
+                    <h1 class="font-poppins font-semibold text-[#585A65]">
+                      Ellen Ochoa
+                    </h1>
+                    <p class="font-poppins text-sm text-[#585A65]">
+                      Los Angeles, USA
+                    </p>
+                  </div>
+                  <button class="h-12 w-12 rounded-full flex items-center justify-center border bg-white">
+                    <img src="../assets/setting/delete.svg" alt="delete" />
+                  </button>
+                </div>
+              </div>
+              <div
+                class="flex items-center w-full gap-x-2 py-4 hover:bg-gradient-to-l from-[#E7EEF3] via-[#e7eee942] to-[#E7EEF3] p-4">
+                <img src="../assets/setting/People3.png" alt="avatar" class="w-10 h-10 rounded-full" />
+                <div class="w-full flex justify-between items-center">
+                  <div>
+                    <h1 class="font-poppins font-semibold text-[#585A65]">
+                      John don
+                    </h1>
+                    <p class="font-poppins text-sm text-[#585A65]">NY, USA</p>
+                  </div>
+                  <button class="h-12 w-12 rounded-full flex items-center justify-center border bg-white">
+                    <img src="../assets/setting/delete.svg" alt="delete" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- teams -->
+        <div class="flex py-8 border-b border-[#EBEFF2] w-full">
+          <!-- left content -->
+          <div class="py-4 w-[35%] space-y-2">
+            <h3 class="font-poppins font-semibold text-[#585A65]">Teams</h3>
+            <p class="font-poppins text-[15px] text-[#585A65]">
+              A team consists of a group of staffers that share
+              responsibilities and need to be mentioned or assigned at once
+            </p>
+          </div>
+          <!-- right content -->
+          <div class="p-4 w-[65%] border border-[#EBEFF2] rounded-2xl space-y-2">
+            <div class="border-b border-[#EBEFF2] space-y-4 pb-4">
+              <h1 class="font-poppins font-semibold text-[#585A65]">
+                Team Settings
+              </h1>
+              <p class="font-poppins text-[13px] text-[#585A65]">
+                Add as many teams you like and just use the team username as
+                regular @name.
+              </p>
+            </div>
+
+            <!-- add teams -->
+            <div class="flex justify-between w-full gap-x-4">
+              <label for="support" class="space-y-2 w-full">
+                <h1 class="font-poppins text-sm font-medium text-[#585A65]">
+                  Team name
+                </h1>
+                <input type="text" name="support" id="support"
+                  class="w-full text-base font-poppins border border-[#EBEFF2] rounded-md py-3 px-5 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent"
+                  placeholder="@Support" />
+              </label>
+              <label for="support" class="space-y-2 w-full relative">
+                <h1 class="font-poppins text-sm font-medium text-[#585A65]">
+                  Add memebers
+                </h1>
+                <input type="text" name="support" id="support"
+                  class="w-full text-base font-poppins border border-[#EBEFF2] rounded-md py-3 px-12 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent"
+                  placeholder="Add john Smith" />
+                <img src="../assets/setting/search.svg" alt="search" class="absolute top-8 left-4" />
+              </label>
+            </div>
+
+            <div class="flex justify-center">
+              <button class="mt-4 rounded-lg py-3 px-6 bg-[#2780A8] text-white text-[15px] font-poppins font-medium">
+                Add Another Team
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- manage threads -->
+        <div class="flex py-8 w-full">
+          <!-- left content -->
+          <div class="py-4 w-[35%] space-y-2">
+            <h3 class="font-poppins font-semibold text-[#585A65]">
+              Manage Threads
+            </h3>
+            <p class="font-poppins text-[15px] text-[#585A65]">
+              Delete the threads that are not needed anyone
+            </p>
+          </div>
+          <!-- right content -->
+          <div class="w-[65%] border border-[#EBEFF2] rounded-2xl">
+            <div class="p-4 border-b border-[#EBEFF2]">
+              <h1 class="font-poppins font-semibold text-[#585A65]">
+                Threads
+              </h1>
+            </div>
+
+            <!-- threads grid 3x3 -->
+            <div class="grid grid-cols-3 grid-rows-3">
+              <!-- row 1 -->
+              <div class="p-5 border-b border-r border-[#EBEFF2]">
+                <p class="font-medium font-poppins text-[15px] text-[#585A65]">
+                  General Support
+                </p>
+                <p class="font-poppins text-[13px] text-[#70737D]">Public</p>
+              </div>
+              <div class="p-5 border-b border-r border-[#EBEFF2] text-center">
+                <p class="font-poppins text-[13px] text-[#70737D]">
+                  39,650 posts
+                </p>
+              </div>
+              <div class="p-5 border-b border-[#EBEFF2]">
+                <button class="h-12 w-12 rounded-full flex items-center justify-center border bg-white">
+                  <img src="../assets/setting/delete.svg" alt="delete" />
+                </button>
+              </div>
+
+              <!-- row 2 -->
+              <div class="p-5 border-b border-r border-[#EBEFF2]">
+                <p class="font-medium font-poppins text-[15px] text-[#585A65]">
+                  Random
+                </p>
+                <p class="font-poppins text-[13px] text-[#70737D]">Public</p>
+              </div>
+              <div class="p-5 border-b border-r border-[#EBEFF2] text-center">
+                <p class="font-poppins text-[13px] text-[#70737D]">
+                  2,750 posts
+                </p>
+              </div>
+              <div class="p-5 border-b border-[#EBEFF2]">
+                <button class="h-12 w-12 rounded-full flex items-center justify-center border bg-white">
+                  <img src="../assets/setting/delete.svg" alt="delete" />
+                </button>
+              </div>
+
+              <!-- row 3 -->
+              <div class="p-5 border-r border-[#EBEFF2]">
+                <p class="font-medium font-poppins text-[15px] text-[#585A65]">
+                  Logistics
+                </p>
+                <p class="font-poppins text-[13px] text-[#70737D]">Public</p>
+              </div>
+              <div class="p-5 border-r border-[#EBEFF2] text-center">
+                <p class="font-poppins text-[13px] text-[#70737D]">
+                  450 posts
+                </p>
+              </div>
+              <div class="p-5 border-[#EBEFF2]">
+                <button class="h-12 w-12 rounded-full flex items-center justify-center border bg-white">
+                  <img src="../assets/setting/delete.svg" alt="delete" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- right sidenav -->
+      <div class="bg-[#EFF3F6] w-full h-full">
+        <div class="py-6 px-2 flex justify-end border-b border-[#DBDBDB]">
+          <!-- bell icon -->
+          <div class="px-6 border-r border-[#DBDBDB]">
+            <div class="w-14 h-14 rounded-full bg-white flex justify-center items-center">
+              <button class="relative">
+                <img src="../assets/setting/bell.svg" alt="bell" class="w-7" />
+                <p
+                  class="absolute top-0 right-0 w-4 h-4 text-center text-xs rounded-full bg-[#3C4652] text-white ring-2 ring-white">
+                  2
+                </p>
+              </button>
+            </div>
+          </div>
+          <!-- profile image -->
+          <div class="flex items-center space-x-4 px-6">
+            <img src="../assets/setting/People6.png" alt="profile" class="w-14 h-14 rounded-full" />
+            <div>
+              <p class="font-poppins font-medium text-[#585A65]">
+                Meria Doo
+              </p>
+              <p class="font-poppins text-sm text-[#BCBCBC]">Staff Collab</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 space-y-4 h-[calc(100vh-8rem)] overflow-y-scroll" id="rightdiv">
+          <!-- notifications -->
+
+          <!-- join notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/join.svg" alt="join" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                Your team just growing!
+                <span class="text-[#3E3E3E] font-medium">@Ellana just join</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- mention notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/mention.svg" alt="metion" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                <span class="text-[#3E3E3E] font-medium">@Jane Mentioned</span>
+                you in
+                <span class="text-[#3E3E3E] font-medium">#Logistics</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- message notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/message-blue.svg" alt="message" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                <span class="text-[#3E3E3E] font-medium">@Jane</span>
+                sent you a new Direct message
+              </p>
+            </div>
+          </div>
+
+          <!-- warning notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/warning.svg" alt="warning" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                You have a task due in less than
+                <span class="text-[#3E3E3E] font-medium">12 hours</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- message notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/message-blue.svg" alt="message" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                <span class="text-[#3E3E3E] font-medium">@Jane</span>
+                sent you a new Direct message
+              </p>
+            </div>
+          </div>
+
+          <!-- join notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/join.svg" alt="join" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                Your team just growing!
+                <span class="text-[#3E3E3E] font-medium">@Ellana just join</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- mention notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/mention.svg" alt="metion" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                <span class="text-[#3E3E3E] font-medium">@Jane Mentioned</span>
+                you in
+                <span class="text-[#3E3E3E] font-medium">#Logistics</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- message notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/message-blue.svg" alt="message" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                <span class="text-[#3E3E3E] font-medium">@Jane</span>
+                sent you a new Direct message
+              </p>
+            </div>
+          </div>
+
+          <!-- warning notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/warning.svg" alt="warning" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                You have a task due in less than
+                <span class="text-[#3E3E3E] font-medium">12 hours</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- message notification -->
+          <div class="p-2 hover:bg-white flex items-center gap-x-2 border border-[#DBDBDB] rounded-xl group">
+            <div
+              class="w-14 h-14 rounded-xl group-hover:bg-white group-hover:border border-[#DFE5EA] bg-[#DFE5EA] flex justify-center items-center">
+              <img src="../assets/setting/message-blue.svg" alt="message" />
+            </div>
+
+            <div class="font-poppins">
+              <p class="text-[#70737D]">
+                <span class="text-[#3E3E3E] font-medium">@Jane</span>
+                sent you a new Direct message
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>

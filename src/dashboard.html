@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MCollab</title>
+        <!-- Alpine Plugins -->
+        <script defer src="https://unpkg.com/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js"></script>
+        <link rel="stylesheet" href="../dist/output.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- https://www.chartjs.org/ -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+        <style>
+            /* width */
+
+            #leftdiv::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            /* Track */
+
+            #leftdiv::-webkit-scrollbar-track {
+                background: #ffffff;
+            }
+
+            /* Handle */
+
+            #leftdiv::-webkit-scrollbar-thumb {
+                background: #cfcfcf;
+                border-radius: 10px;
+            }
+
+            /* width */
+
+            #centerdiv::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            /* Track */
+
+            #centerdiv::-webkit-scrollbar-track {
+                background: #ffffff;
+            }
+
+            /* Handle */
+
+            #centerdiv::-webkit-scrollbar-thumb {
+                background: #cfcfcf;
+                border-radius: 10px;
+            }
+
+            #rightdiv::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            /* Track */
+            #rightdiv::-webkit-scrollbar-track {
+                background: #eff3f6;
+            }
+
+            /* Handle */
+            #rightdiv::-webkit-scrollbar-thumb {
+                background: #cfcfcf;
+                border-radius: 10px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <main class="w-screen h-screen">
+            <section class="max-w-[2720px] mx-auto h-full grid grid-cols-[minmax(250px,330px)_minmax(870px,_1fr)_minmax(410px,500px)]">
+                <!-- left sidenav -->
+                <div class="bg-[#EFF3F6] w-full h-full p-4 overflow-y-scroll" id="leftdiv">
+                    <img src="../assets/setting/logo.svg" alt="logo" class="mt-4" />
+                    <div class="w-full mt-8 flex flex-col gap-y-2">
+                        <button
+                            class="bg-[#2780A8] text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-white px-5"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/home.svg" alt="home" />
+                                <p>Home</p>
+                            </div>
+                            <img src="../assets/setting/right-arrow.svg" alt="right-arrow" />
+                        </button>
+                        <!-- task button -->
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/tasks.svg" alt="tasks" />
+                                <p>Tasks</p>
+                            </div>
+                            <div class="h-6 w-6 rounded-lg flex justify-center items-center bg-[#E6ECF1]">
+                                <p class="text-[#989BA3]">7</p>
+                            </div>
+                        </button>
+                        <!-- mentions button -->
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/mention.svg" alt="mentions" />
+                                <p>Mentions</p>
+                            </div>
+                            <div class="h-6 w-6 rounded-lg flex justify-center items-center bg-[#E6ECF1]">
+                                <p class="text-[#989BA3]">23</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- threads & messages -->
+                    <div class="flex flex-col gap-y-4 mt-2">
+                        <!-- threads -->
+                        <div class="flex flex-col">
+                            <div
+                                class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                            >
+                                <div class="flex items-center gap-x-2">
+                                    <img src="../assets/setting/threads.svg" alt="threads" />
+                                    <p>Threads</p>
+                                </div>
+
+                                <!-- create thread modal -->
+                                <div x-data="{ open: false }" class="flex justify-center">
+                                    <!-- Trigger -->
+                                    <button x-on:click="open = true" class="h-6 w-6 rounded-full flex justify-center items-center bg-[#2780A8]">
+                                        <p class="text-white">+</p>
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div
+                                        x-show="open"
+                                        style="display: none"
+                                        x-on:keydown.escape.prevent.stop="open = false"
+                                        role="dialog"
+                                        aria-modal="true"
+                                        x-id="['modal-title']"
+                                        :aria-labelledby="$id('modal-title')"
+                                        class="fixed inset-0 z-10 overflow-y-auto"
+                                    >
+                                        <!-- Overlay -->
+                                        <div x-show="open" x-transition.opacity class="fixed inset-0 bg-black bg-opacity-50"></div>
+
+                                        <!-- Panel -->
+                                        <div
+                                            x-show="open"
+                                            x-transition
+                                            x-on:click="open = false"
+                                            class="relative flex min-h-screen items-center justify-center p-4"
+                                        >
+                                            <div
+                                                x-on:click.stop
+                                                x-trap.noscroll.inert="open"
+                                                class="relative w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-8 shadow-lg"
+                                            >
+                                                <!-- close button -->
+                                                <div class="text-end">
+                                                    <button x-on:click="open = false">
+                                                        <img src="../assets/close.svg" alt="close" />
+                                                    </button>
+                                                </div>
+
+                                                <!-- Title -->
+                                                <h2 class="text-3xl font-poppins font-semibold text-center py-6 border-b" :id="$id('modal-title')">
+                                                    Create New Thread
+                                                </h2>
+
+                                                <!-- Content -->
+                                                <div>
+                                                    <form action="/" class="w-full py-4 space-y-4">
+                                                        <input
+                                                            type="text"
+                                                            class="w-full border font-poppins text-[15px] p-3 text-black placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                            placeholder="Thread name"
+                                                        />
+
+                                                        <select
+                                                            name="permission"
+                                                            id=""
+                                                            class="w-full border font-poppins text-[15px] p-3 placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                        >
+                                                            <option value="permission" class="text-[#AFB3B8]">Permission</option>
+                                                            <option value="yes">yes</option>
+                                                            <option value="yes">no</option>
+                                                        </select>
+
+                                                        <div class="mt-4 w-full relative">
+                                                            <input
+                                                                type="text"
+                                                                class="pr-10 w-full border font-poppins text-[15px] p-3 text-black placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                                placeholder="Add Memebers +"
+                                                            />
+                                                            <img src="../assets/setting/search.svg" alt="search" class="absolute top-2.5 right-2" />
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <!-- Buttons -->
+                                                <div class="pt-6 flex justify-center border-t space-x-3">
+                                                    <button
+                                                        type="button"
+                                                        x-on:click="open = false"
+                                                        class="rounded-md border font-poppins font-medium text-[15px] border-gray-200 bg-white px-5 py-3 flex items-center gap-x-2"
+                                                    >
+                                                        <img src="../assets/closesm.svg" alt="close" />
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        x-on:click="open = false"
+                                                        class="rounded-md border font-poppins font-medium text-[15px] bg-[#2780A8] border-gray-200 text-white px-5 py-3"
+                                                    >
+                                                        Create thread
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex px-7 w-full">
+                                <div class="w-[2px] bg-[#D7D9DC]"></div>
+                                <div class="text-sm rounded-lg font-poppins font-medium text-[#585A65] px-5 flex flex-col gap-y-2">
+                                    <button class="py-2">General</button>
+                                    <button class="py-2">Random</button>
+                                    <button class="py-2">Logistics</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- message -->
+                        <div class="flex flex-col">
+                            <div
+                                class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                            >
+                                <div class="flex items-center gap-x-2">
+                                    <img src="../assets/setting/message.svg" alt="messages" />
+                                    <p>Direct Message</p>
+                                </div>
+                                <button class="">
+                                    <img src="../assets/setting/more.svg" alt="more" />
+                                </button>
+                            </div>
+                            <div class="mt-4 flex px-7 w-full">
+                                <div class="w-[2px] bg-[#D7D9DC]"></div>
+                                <div class="text-sm rounded-lg font-poppins font-medium text-[#585A65] px-5 flex flex-col gap-y-2">
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People2.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jone doe</p>
+                                    </button>
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People1.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jane Due</p>
+                                    </button>
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People3.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jimmy Foo</p>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- setting -->
+
+                    <div class="py-2 border-t mt-12">
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/setting.svg" alt="setting" />
+                                <p>Setting</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- center content -->
+                <div class="bg-white w-full h-full p-4 overflow-y-scroll space-y-3" id="centerdiv">
+                    <!-- top div -->
+                    <div class="mt-2 space-y-2">
+                        <label for="search" class="relative">
+                            <img src="../assets/setting/search.svg" alt="search" class="absolute top-0 left-4" />
+                            <input
+                                type="search"
+                                placeholder="Search"
+                                class="px-12 py-3 font-poppins bg-[#EFF3F6] w-[33.75rem] focus:outline-none rounded-xl"
+                            />
+                        </label>
+
+                        <h1 class="text-2xl font-poppins font-semibold">Dashboard</h1>
+                    </div>
+
+                    <!-- tasks -->
+                    <div class="pb-5 border border-[#EBEFF2] rounded-xl">
+                        <!-- task header -->
+                        <div class="p-5 flex items-center justify-between">
+                            <h1 class="font-poppins font-semibold text-xl text-[#141721]">Tasks</h1>
+
+                            <button>
+                                <img src="../assets/setting/more.svg" alt="more" />
+                            </button>
+                        </div>
+
+                        <!-- task body -->
+                        <div class="overflow-y-scroll h-64" id="centerdiv">
+                            <!-- single task -->
+                            <div class="p-5 border-b border-[#EBEFF2] group hover:bg-gradient-to-l from-[#E7EEF3] via-[#e7eee942] to-[#E7EEF3]">
+                                <!-- top div -->
+                                <div class="flex justify-between items-center">
+                                    <!-- left div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <button x-data="{ check: false}" @click="check = !check">
+                                            <div
+                                                class="w-7 h-7 rounded-full border border-[#EBEFF2] flex items-center justify-center"
+                                                :class="check ? 'bg-[#2780A8]' : 'bg-white' "
+                                            >
+                                                <img x-show="check" src="../assets/check.svg" alt="check" class="w-4 h-4" />
+                                            </div>
+                                        </button>
+                                        <div>
+                                            <h2 class="font-poppins font-semibold text-[#585A65]">Add new product to collection</h2>
+                                            <button class="font-poppins font-medium text-[#2780A8] text-[13px]">Due Today</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- right div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <button
+                                            class="py-2 px-4 text-center text-[13px] font-poppins font-medium bg-[#EFF3F6] rounded-lg group-hover:bg-white"
+                                        >
+                                            open
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- single task -->
+                            <div class="p-5 border-b border-[#EBEFF2] group hover:bg-gradient-to-l from-[#E7EEF3] via-[#e7eee942] to-[#E7EEF3]">
+                                <!-- top div -->
+                                <div class="flex justify-between items-center">
+                                    <!-- left div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <button x-data="{ check: false}" @click="check = !check">
+                                            <div
+                                                class="w-7 h-7 rounded-full border border-[#EBEFF2] flex items-center justify-center"
+                                                :class="check ? 'bg-[#2780A8]' : 'bg-white' "
+                                            >
+                                                <img x-show="check" src="../assets/check.svg" alt="check" class="w-4 h-4" />
+                                            </div>
+                                        </button>
+                                        <div>
+                                            <h2 class="font-poppins font-semibold text-[#585A65]">Add new product to collection</h2>
+                                            <button class="font-poppins font-medium text-[#2780A8] text-[13px]">Due Today</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- right div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <button
+                                            class="py-2 px-4 text-center text-[13px] font-poppins font-medium bg-[#EFF3F6] rounded-lg group-hover:bg-white"
+                                        >
+                                            open
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- single task -->
+                            <div class="p-5 border-b border-[#EBEFF2] group hover:bg-gradient-to-l from-[#E7EEF3] via-[#e7eee942] to-[#E7EEF3]">
+                                <!-- top div -->
+                                <div class="flex justify-between items-center">
+                                    <!-- left div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <button x-data="{ check: false}" @click="check = !check">
+                                            <div
+                                                class="w-7 h-7 rounded-full border border-[#EBEFF2] flex items-center justify-center"
+                                                :class="check ? 'bg-[#2780A8]' : 'bg-white' "
+                                            >
+                                                <img x-show="check" src="../assets/check.svg" alt="check" class="w-4 h-4" />
+                                            </div>
+                                        </button>
+                                        <div>
+                                            <h2 class="font-poppins font-semibold text-[#585A65]">Add new product to collection</h2>
+                                            <button class="font-poppins font-medium text-[#2780A8] text-[13px]">Due Today</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- right div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <button
+                                            class="py-2 px-4 text-center text-[13px] font-poppins font-medium bg-[#EFF3F6] rounded-lg group-hover:bg-white"
+                                        >
+                                            open
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- threads -->
+                    <div class="p-5 border border-[#EBEFF2] rounded-xl">
+                        <!-- threads header -->
+                        <div class="p-5 border-b border-[#EBEFF2] flex items-center justify-between">
+                            <h1 class="font-poppins font-semibold text-xl text-[#141721]">Threads</h1>
+
+                            <button>
+                                <img src="../assets/setting/more.svg" alt="more" />
+                            </button>
+                        </div>
+
+                        <!-- threads body -->
+                        <div class="overflow-y-scroll h-64 space-y-3 mt-3" id="centerdiv">
+                            <!-- single threads -->
+                            <div
+                                class="p-3 border-t border-b border-[#EBEFF2] group hover:bg-gradient-to-l from-[#E7EEF3] via-[#e7eee942] to-[#E7EEF3] rounded-xl"
+                            >
+                                <!-- top div -->
+                                <div class="flex justify-between items-center">
+                                    <!-- left div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <img src="../assets/setting/People2.png" alt="avatar" class="w-9 h-9 rounded-full" />
+                                        <h1 class="text-[#3E3E3E] font-poppins font-semibold">Jon Doe</h1>
+                                        <div
+                                            class="bg-[#2780A8] text-white text-[12px] font-poppins font-medium flex items-center gap-x-2 py-1.5 px-3 rounded-lg"
+                                        >
+                                            <img src="../assets/chat/msg.svg" alt="msg" />
+                                            23
+                                        </div>
+                                    </div>
+
+                                    <!-- right div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <h1 class="text-[#87888E] font-medium font-poppins">a month ago</h1>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- description -->
+                                <div class="flex items-end justify-between py-3">
+                                    <p class="w-[95%] font-poppins text-[15px] text-[#70737D]">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id euismod
+                                        eros consectetur. Nullam vehicula purus vitae magna rhoncus...
+                                    </p>
+                                    <button>
+                                        <img src="../assets/chat/star.svg" alt="star" class="h-5 w-5" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- single threads -->
+                            <div
+                                class="p-3 border-t border-b border-[#EBEFF2] group hover:bg-gradient-to-l from-[#E7EEF3] via-[#e7eee942] to-[#E7EEF3] rounded-xl"
+                            >
+                                <!-- top div -->
+                                <div class="flex justify-between items-center">
+                                    <!-- left div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <img src="../assets/setting/People2.png" alt="avatar" class="w-9 h-9 rounded-full" />
+                                        <h1 class="text-[#3E3E3E] font-poppins font-semibold">Jon Doe</h1>
+                                        <div
+                                            class="bg-[#2780A8] text-white text-[12px] font-poppins font-medium flex items-center gap-x-2 py-1.5 px-3 rounded-lg"
+                                        >
+                                            <img src="../assets/chat/msg.svg" alt="msg" />
+                                            23
+                                        </div>
+                                    </div>
+
+                                    <!-- right div -->
+                                    <div class="flex items-center gap-x-3">
+                                        <h1 class="text-[#87888E] font-medium font-poppins">a month ago</h1>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- description -->
+                                <div class="flex items-end justify-between py-3">
+                                    <p class="w-[95%] font-poppins text-[15px] text-[#70737D]">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id euismod
+                                        eros consectetur. Nullam vehicula purus vitae magna rhoncus...
+                                    </p>
+                                    <button>
+                                        <img src="../assets/chat/star.svg" alt="star" class="h-5 w-5" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- right sidenav -->
+                <div class="bg-[#EFF3F6] w-full h-full z-10 font-poppins">
+                    <div class="py-6 px-2 flex justify-end border-b border-[#DBDBDB]">
+                        <!-- bell icon -->
+                        <div class="px-6 border-r border-[#DBDBDB]">
+                            <div class="w-14 h-14 rounded-full bg-white flex justify-center items-center">
+                                <button class="relative">
+                                    <img src="../assets/setting/bell.svg" alt="bell" class="w-7" />
+                                    <p
+                                        class="absolute top-0 right-0 w-4 h-4 text-center text-xs rounded-full bg-[#3C4652] text-white ring-2 ring-white"
+                                    >
+                                        2
+                                    </p>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- profile image -->
+                        <div class="flex items-center space-x-4 px-6">
+                            <img src="../assets/setting/People6.png" alt="profile" class="w-14 h-14 rounded-full" />
+                            <div>
+                                <p class="font-poppins font-medium text-[#585A65]">Meria Doo</p>
+                                <p class="font-poppins text-sm text-[#BCBCBC]">Staff Collab</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="p-4 border border-[#D9E2E9] rounded-xl">
+                            <h1 class="font-semibold text-2xl">Statistics</h1>
+                            <!-- Statistics chart -->
+                            <!-- <div class="">
+                                <div class="bg-white w-64 h-64 rounded-full flex justify-center items-center">
+                                    <!-- <div class="w-48 h-48 bg-[#F6F6F6] rounded-full relative">
+                                        <!-- 20% -->
+                            <!-- <div
+                                            class="absolute top-0 left-[50%] w-24 h-24 border-[#3998C2] border-[2rem] border-l-0 border-b-0 rounded-tr-full"
+                                        ></div> -->
+                            <!-- </div> -->
+                            <!-- </div>
+                            </div> -->
+                            <div
+                                x-data="{
+                                            
+                                            init() {
+                                                let chart = new Chart(this.$refs.canvas.getContext('2d'), {
+                                                    type: 'doughnut',
+                                                    data: {
+                                                                labels: [
+                                                                        'In Progress',
+                                                                        'Complete',
+                                                                        'Not Complete'
+                                                                    ],
+                                                                      
+                                                                    datasets: [{
+                                                                          data: [20, 50, 30],
+                                                                        backgroundColor: [
+                                                                        '#3998C2',
+                                                                        '#2780A8',
+                                                                        '#F6F6F6'
+                                                                        ],
+                                                                        hoverBorderWidth: 10,
+                                                                        borderColor: [
+                                                                        '#3998C2',
+                                                                        '#2780A8',
+                                                                        '#F6F6F6'
+                                                                        ],
+                                                                          
+                                                                    }],
+                                                                    
+                                                    },
+                                                })
+
+                                            }
+                                        }"
+                                class="w-full flex justify-center items-center relative"
+                            >
+                                <canvas x-ref="canvas" class="rounded-lg p-8 font-poppins"></canvas>
+                                <div
+                                    class="h-28 w-28 rounded-full z-50 absolute top-[40%] bg-white flex flex-col justify-center items-center font-poppins"
+                                >
+                                    <p class="text-[#141721] text-3xl font-semibold">70%</p>
+                                    <p class="text-[#70737D] text-[15px]">Complete</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- messages -->
+                        <div class="">
+                            <div class="flex items-center justify-between">
+                                <h1 class="font-semibold text-2xl">Messages</h1>
+                                <div class="border border-[#BAD7CB] py-2 px-4 flex items-center gap-x-2 bg-[#F2FAF5] rounded-lg">
+                                    <div class="bg-[#059651] w-3 h-3 rounded-full"></div>
+                                    <p class="font-medium text-[15px]">Active</p>
+                                </div>
+                            </div>
+
+                            <!-- messages body -->
+                            <div class="h-80 overflow-y-scroll" id="leftdiv">
+                                <!-- single message -->
+                                <div class="py-4 space-y-2 border-b border-[#E0E4E8]">
+                                    <!-- top div -->
+                                    <div class="flex justify-between items-center">
+                                        <!-- left div -->
+                                        <div class="flex items-center gap-x-3">
+                                            <img src="../assets/setting/People3.png" alt="avatar" class="w-9 h-9 rounded-full" />
+                                            <h1 class="text-[#3E3E3E] font-poppins font-semibold">Jon Doe</h1>
+                                        </div>
+
+                                        <!-- right div -->
+                                        <h1 class="text-[#87888E] font-medium font-poppins">2 minutes ago</h1>
+                                    </div>
+                                    <p class="text-[#70737D] text-[15px]">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus...
+                                    </p>
+                                </div>
+
+                                <!-- single message -->
+                                <div class="py-4 space-y-2 border-b border-[#E0E4E8]">
+                                    <!-- top div -->
+                                    <div class="flex justify-between items-center">
+                                        <!-- left div -->
+                                        <div class="flex items-center gap-x-3">
+                                            <img src="../assets/setting/People1.png" alt="avatar" class="w-9 h-9 rounded-full" />
+                                            <h1 class="text-[#3E3E3E] font-poppins font-semibold">Jane Due</h1>
+                                        </div>
+
+                                        <!-- right div -->
+                                        <h1 class="text-[#87888E] font-medium font-poppins">a hour ago</h1>
+                                    </div>
+                                    <p class="text-[#70737D] text-[15px]">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus...
+                                    </p>
+                                </div>
+
+                                <!-- single message -->
+                                <div class="py-4 space-y-2">
+                                    <!-- top div -->
+                                    <div class="flex justify-between items-center">
+                                        <!-- left div -->
+                                        <div class="flex items-center gap-x-3">
+                                            <img src="../assets/setting/People5.png" alt="avatar" class="w-9 h-9 rounded-full" />
+                                            <h1 class="text-[#3E3E3E] font-poppins font-semibold">Jimmy Fooa</h1>
+                                        </div>
+
+                                        <!-- right div -->
+                                        <h1 class="text-[#87888E] font-medium font-poppins">5 hour ago</h1>
+                                    </div>
+                                    <p class="text-[#70737D] text-[15px]">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>

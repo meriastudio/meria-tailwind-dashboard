@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MCollab</title>
+        <script defer src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js"></script>
+        <link rel="stylesheet" href="../dist/output.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* width */
+
+            #leftdiv::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            /* Track */
+
+            #leftdiv::-webkit-scrollbar-track {
+                background: inherit;
+            }
+
+            /* Handle */
+
+            #leftdiv::-webkit-scrollbar-thumb {
+                background: #cfcfcf;
+                border-radius: 10px;
+            }
+
+            /* width */
+
+            #centerdiv::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            /* Track */
+
+            #centerdiv::-webkit-scrollbar-track {
+                background: #ffffff;
+            }
+
+            /* Handle */
+
+            #centerdiv::-webkit-scrollbar-thumb {
+                background: #cfcfcf;
+                border-radius: 10px;
+            }
+
+            #rightdiv::-webkit-scrollbar {
+                width: 4px;
+            }
+
+            /* Track */
+            #rightdiv::-webkit-scrollbar-track {
+                background: #eff3f6;
+            }
+
+            /* Handle */
+            #rightdiv::-webkit-scrollbar-thumb {
+                background: #cfcfcf;
+                border-radius: 10px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <main class="w-screen h-screen">
+            <section
+                class="max-w-[2720px] mx-auto h-full grid grid-cols-[minmax(250px,330px)_minmax(870px,_1fr)_minmax(410px,500px)]"
+                x-data="{show : false}"
+            >
+                <!-- left sidenav -->
+                <div class="bg-[#EFF3F6] w-full h-full p-4 overflow-y-scroll" id="leftdiv">
+                    <img src="../assets/setting/logo.svg" alt="logo" class="mt-4" />
+                    <div class="w-full mt-8 flex flex-col gap-y-2">
+                        <button
+                            class="bg-[#2780A8] text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-white px-5"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/home.svg" alt="home" />
+                                <p>Home</p>
+                            </div>
+                            <img src="../assets/setting/right-arrow.svg" alt="right-arrow" />
+                        </button>
+                        <!-- task button -->
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/tasks.svg" alt="tasks" />
+                                <p>Tasks</p>
+                            </div>
+                            <div class="h-6 w-6 rounded-lg flex justify-center items-center bg-[#E6ECF1]">
+                                <p class="text-[#989BA3]">7</p>
+                            </div>
+                        </button>
+                        <!-- mentions button -->
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/mention.svg" alt="mentions" />
+                                <p>Mentions</p>
+                            </div>
+                            <div class="h-6 w-6 rounded-lg flex justify-center items-center bg-[#E6ECF1]">
+                                <p class="text-[#989BA3]">23</p>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- threads & messages -->
+                    <div class="flex flex-col gap-y-4 mt-2">
+                        <!-- threads -->
+                        <div class="flex flex-col">
+                            <div
+                                class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                            >
+                                <div class="flex items-center gap-x-2">
+                                    <img src="../assets/setting/threads.svg" alt="threads" />
+                                    <p>Threads</p>
+                                </div>
+
+                                <!-- create thread modal -->
+                                <div x-data="{ open: false }" class="flex justify-center">
+                                    <!-- Trigger -->
+                                    <button x-on:click="open = true" class="h-6 w-6 rounded-full flex justify-center items-center bg-[#2780A8]">
+                                        <p class="text-white">+</p>
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div
+                                        x-show="open"
+                                        style="display: none"
+                                        x-on:keydown.escape.prevent.stop="open = false"
+                                        role="dialog"
+                                        aria-modal="true"
+                                        x-id="['modal-title']"
+                                        :aria-labelledby="$id('modal-title')"
+                                        class="fixed inset-0 z-10 overflow-y-auto"
+                                    >
+                                        <!-- Overlay -->
+                                        <div x-show="open" x-transition.opacity class="fixed inset-0 bg-black bg-opacity-50"></div>
+
+                                        <!-- Panel -->
+                                        <div
+                                            x-show="open"
+                                            x-transition
+                                            x-on:click="open = false"
+                                            class="relative flex min-h-screen items-center justify-center p-4"
+                                        >
+                                            <div
+                                                x-on:click.stop
+                                                x-trap.noscroll.inert="open"
+                                                class="relative w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-8 shadow-lg"
+                                            >
+                                                <!-- close button -->
+                                                <div class="text-end">
+                                                    <button x-on:click="open = false">
+                                                        <img src="../assets/close.svg" alt="close" />
+                                                    </button>
+                                                </div>
+
+                                                <!-- Title -->
+                                                <h2 class="text-3xl font-poppins font-semibold text-center py-6 border-b" :id="$id('modal-title')">
+                                                    Create New Thread
+                                                </h2>
+
+                                                <!-- Content -->
+                                                <div>
+                                                    <form action="/" class="w-full py-4 space-y-4">
+                                                        <input
+                                                            type="text"
+                                                            class="w-full border font-poppins text-[15px] p-3 text-black placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                            placeholder="Thread name"
+                                                        />
+
+                                                        <select
+                                                            name="permission"
+                                                            id=""
+                                                            class="w-full border font-poppins text-[15px] p-3 placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                        >
+                                                            <option value="permission" class="text-[#AFB3B8]">Permission</option>
+                                                            <option value="yes">yes</option>
+                                                            <option value="yes">no</option>
+                                                        </select>
+
+                                                        <div class="mt-4 w-full relative">
+                                                            <input
+                                                                type="text"
+                                                                class="pr-10 w-full border font-poppins text-[15px] p-3 text-black placeholder:text-[#AFB3B8] focus:outline-[#2780A8] rounded-lg"
+                                                                placeholder="Add Memebers +"
+                                                            />
+                                                            <img src="../assets/setting/search.svg" alt="search" class="absolute top-2.5 right-2" />
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <!-- Buttons -->
+                                                <div class="pt-6 flex justify-center border-t space-x-3">
+                                                    <button
+                                                        type="button"
+                                                        x-on:click="open = false"
+                                                        class="rounded-md border font-poppins font-medium text-[15px] border-gray-200 bg-white px-5 py-3 flex items-center gap-x-2"
+                                                    >
+                                                        <img src="../assets/closesm.svg" alt="close" />
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        x-on:click="open = false"
+                                                        class="rounded-md border font-poppins font-medium text-[15px] bg-[#2780A8] border-gray-200 text-white px-5 py-3"
+                                                    >
+                                                        Create thread
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex px-7 w-full">
+                                <div class="w-[2px] bg-[#D7D9DC]"></div>
+                                <div class="text-sm rounded-lg font-poppins font-medium text-[#585A65] px-5 flex flex-col gap-y-2">
+                                    <button class="py-2">General</button>
+                                    <button class="py-2">Random</button>
+                                    <button class="py-2">Logistics</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- message -->
+                        <div class="flex flex-col">
+                            <div
+                                class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                            >
+                                <div class="flex items-center gap-x-2">
+                                    <img src="../assets/setting/message.svg" alt="messages" />
+                                    <p>Direct Message</p>
+                                </div>
+                                <button class="">
+                                    <img src="../assets/setting/more.svg" alt="more" />
+                                </button>
+                            </div>
+                            <div class="mt-4 flex px-7 w-full">
+                                <div class="w-[2px] bg-[#D7D9DC]"></div>
+                                <div class="text-sm rounded-lg font-poppins font-medium text-[#585A65] px-5 flex flex-col gap-y-2">
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People2.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jone doe</p>
+                                    </button>
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People1.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jane Due</p>
+                                    </button>
+                                    <button class="py-2 flex items-center gap-x-3">
+                                        <img src="../assets/setting/People3.png" alt="person" class="rounded-full h-10 w-10" />
+                                        <p>Jimmy Foo</p>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- setting -->
+
+                    <div class="py-2 border-t mt-12">
+                        <button
+                            class="text-sm w-full py-4 flex justify-between items-center rounded-lg font-poppins font-medium text-[#585A65] px-5 hover:bg-white"
+                        >
+                            <div class="flex items-center gap-x-2">
+                                <img src="../assets/setting/setting.svg" alt="setting" />
+                                <p>Setting</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- center content -->
+                <div class="bg-white w-full h-full p-4 overflow-y-scroll" id="centerdiv">
+                    <!-- top div -->
+                    <div class="mt-2 space-y-2">
+                        <label for="search" class="relative">
+                            <img src="../assets/setting/search.svg" alt="search" class="absolute top-0 left-4" />
+                            <input
+                                type="search"
+                                placeholder="Search"
+                                class="px-12 py-3 font-poppins bg-[#EFF3F6] w-[33.75rem] focus:outline-none rounded-xl"
+                            />
+                        </label>
+
+                        <h1 class="text-2xl font-poppins font-semibold py-3">Threads</h1>
+                    </div>
+
+                    <!-- chat body -->
+                    <div class="rounded-xl border border-[#EBEFF2] w-full">
+                        <!-- chat head -->
+                        <div class="px-5 py-3 flex items-center justify-between border-b border-[#EBEFF2]">
+                            <div class="flex items-center py-4 w-56 relative">
+                                <img src="../assets/setting/People5.png" alt="avatar" class="w-9 h-9 rounded-full absolute left-0" />
+                                <img src="../assets/setting/People3.png" alt="avatar" class="w-9 h-9 rounded-full absolute left-6 ring ring-white" />
+                                <img src="../assets/setting/People1.png" alt="avatar" class="w-9 h-9 rounded-full absolute left-12 ring ring-white" />
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <button>
+                                    <img src="../assets/chat/star.svg" alt="star" />
+                                </button>
+                                <button>
+                                    <img src="../assets/setting/more.svg" alt="more" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- messages -->
+                        <div class="py-3 px-5 h-[calc(100vh-33vh)] overflow-y-scroll" id="centerdiv">
+                            <!-- msg 1 -->
+                            <div class="flex items-end py-4 gap-x-2">
+                                <img src="../assets/setting/People2.png" alt="avatar" class="w-9 h-9 rounded-full mb-5" />
+                                <div>
+                                    <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[30rem]">
+                                        <p class="font-poppins text-[#585A65]">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                            euismod eros consectetur.
+                                        </p>
+                                    </div>
+                                    <div class="py-2 flex items-center gap-x-4">
+                                        <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Don</p>
+                                        <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                        <button
+                                            @click="show = !show"
+                                            class="bg-[#2780A8] text-white text-[12px] font-poppins font-medium flex items-center gap-x-2 py-1 px-3 rounded-lg"
+                                        >
+                                            <img src="../assets/chat/msg.svg" alt="msg" />
+                                            23
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- msg 2 -->
+                            <div class="flex items-end py-4 gap-x-2">
+                                <img src="../assets/setting/People5.png" alt="avatar" class="w-9 h-9 rounded-full mb-5" />
+                                <div>
+                                    <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[45rem]">
+                                        <p class="font-poppins text-[#585A65]">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                            euismod eros consectetur.
+                                        </p>
+                                    </div>
+                                    <div class="py-2 flex items-center gap-x-4">
+                                        <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Doe</p>
+                                        <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                        <button
+                                            @click="show = !show"
+                                            class="bg-[#2780A8] text-white text-[12px] font-poppins font-medium flex items-center gap-x-2 py-1 px-3 rounded-lg"
+                                        >
+                                            <img src="../assets/chat/msg.svg" alt="msg" />
+                                            23
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- msg 3 -->
+                            <div class="flex flex-row-reverse items-end py-4 gap-x-2">
+                                <img src="../assets/chat/People6.png" alt="avatar" class="w-9 h-9 rounded-full mb-5" />
+                                <div>
+                                    <div class="bg-[#2780A8] p-4 rounded-t-xl rounded-bl-xl flex justify-end">
+                                        <p class="font-poppins text-white">Ok Sure!! Lorem ipsum</p>
+                                    </div>
+                                    <div class="py-2 flex flex-row-reverse items-center gap-x-4">
+                                        <p class="text-[15px] text-[#585A65] font-poppins font-medium">You</p>
+                                        <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- msg 4 -->
+                            <div class="flex items-end py-4 gap-x-2">
+                                <img src="../assets/setting/People3.png" alt="avatar" class="w-9 h-9 rounded-full mb-5" />
+                                <div>
+                                    <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[30rem]">
+                                        <p class="font-poppins text-[#585A65]">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                            euismod eros consectetur.
+                                        </p>
+                                    </div>
+                                    <div class="py-2 flex items-center gap-x-4">
+                                        <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jimmy Doe</p>
+                                        <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                        <button
+                                            @click="show = !show"
+                                            class="bg-[#2780A8] text-white text-[12px] font-poppins font-medium flex items-center gap-x-2 py-1 px-3 rounded-lg"
+                                        >
+                                            <img src="../assets/chat/msg.svg" alt="msg" />
+                                            23
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- msg 1 -->
+                            <div class="flex items-end py-4 gap-x-2">
+                                <img src="../assets/setting/People2.png" alt="avatar" class="w-9 h-9 rounded-full mb-5" />
+                                <div>
+                                    <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[30rem]">
+                                        <p class="font-poppins text-[#585A65]">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                            euismod eros consectetur.
+                                        </p>
+                                    </div>
+                                    <div class="py-2 flex items-center gap-x-4">
+                                        <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Don</p>
+                                        <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                        <button
+                                            class="bg-[#2780A8] text-white text-[12px] font-poppins font-medium flex items-center gap-x-2 py-1 px-3 rounded-lg"
+                                            @click="show = !show"
+                                        >
+                                            <img src="../assets/chat/msg.svg" alt="msg" />
+                                            23
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- msg 2 -->
+                            <div class="flex items-end py-4 gap-x-2">
+                                <img src="../assets/setting/People5.png" alt="avatar" class="w-9 h-9 rounded-full mb-5" />
+                                <div>
+                                    <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[45rem]">
+                                        <p class="font-poppins text-[#585A65]">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                            euismod eros consectetur.
+                                        </p>
+                                    </div>
+                                    <div class="py-2 flex items-center gap-x-4">
+                                        <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Doe</p>
+                                        <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                        <button
+                                            @click="show = !show"
+                                            class="bg-[#2780A8] text-white text-[12px] font-poppins font-medium flex items-center gap-x-2 py-1 px-3 rounded-lg"
+                                        >
+                                            <img src="../assets/chat/msg.svg" alt="msg" />
+                                            23
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- msg 3 -->
+                            <div class="flex flex-row-reverse items-end py-4 gap-x-2">
+                                <img src="../assets/chat/People6.png" alt="avatar" class="w-9 h-9 rounded-full mb-5" />
+                                <div>
+                                    <div class="bg-[#2780A8] p-4 rounded-t-xl rounded-bl-xl flex justify-end">
+                                        <p class="font-poppins text-white">Ok Sure!! Lorem ipsum</p>
+                                    </div>
+                                    <div class="py-2 flex flex-row-reverse items-center gap-x-4">
+                                        <p class="text-[15px] text-[#585A65] font-poppins font-medium">You</p>
+                                        <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- msg 4 -->
+                            <div class="flex items-end py-4 gap-x-2">
+                                <img src="../assets/setting/People3.png" alt="avatar" class="w-9 h-9 rounded-full mb-5" />
+                                <div>
+                                    <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[30rem]">
+                                        <p class="font-poppins text-[#585A65]">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                            euismod eros consectetur.
+                                        </p>
+                                    </div>
+                                    <div class="py-2 flex items-center gap-x-4">
+                                        <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jimmy Doe</p>
+                                        <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                        <button>
+                                            <img src="../assets/setting/more.svg" alt="more" />
+                                        </button>
+                                        <div
+                                            class="bg-[#2780A8] text-white text-[12px] font-poppins font-medium flex items-center gap-x-2 py-1 px-3 rounded-lg"
+                                        >
+                                            <img src="../assets/chat/msg.svg" alt="msg" />
+                                            23
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- send msg -->
+                        <div class="py-3 px-5 w-full flex items-center gap-x-3 sticky bottom-0">
+                            <label for="sendmsg" class="w-full relative">
+                                <input
+                                    type="text"
+                                    class="p-3 pr-48 border border-[#EBEFF2] font-poppins text-[15px] placeholder:text-[#AFB3B8] w-full rounded-lg focus:outline-[#2780A8]"
+                                    placeholder="Post goes here..."
+                                />
+
+                                <!-- icons -->
+
+                                <div class="absolute top-3 right-5 flex items-center gap-x-3">
+                                    <button>
+                                        <img src="../assets/chat/emoji.svg" alt="emoji" />
+                                    </button>
+
+                                    <button>
+                                        <img src="../assets/chat/attach.svg" alt="attach" />
+                                    </button>
+
+                                    <button>
+                                        <img src="../assets/chat/gallery.svg" alt="gallery" />
+                                    </button>
+
+                                    <button>
+                                        <img src="../assets/chat/text.svg" alt="text" />
+                                    </button>
+
+                                    <button>
+                                        <img src="../assets/chat/send.svg" alt="send" />
+                                    </button>
+                                </div>
+                            </label>
+
+                            <button class="text-white text-[15px] font-poppins py-3 px-5 rounded-lg bg-[#2780A8] active:bg-[#359fd0]">Reply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- right sidenav -->
+                <div class="w-full h-full overflow-y-scroll bg-[#EFF3F6]" id="leftdiv">
+                    <div :class="show ? 'hidden' : ' '">
+                        <div class="py-6 px-2 flex justify-end border-b border-[#DBDBDB]">
+                            <!-- bell icon -->
+                            <div class="px-6 border-r border-[#DBDBDB]">
+                                <div class="w-14 h-14 rounded-full bg-white flex justify-center items-center">
+                                    <button class="relative">
+                                        <img src="../assets/setting/bell.svg" alt="bell" class="w-7" />
+                                        <p
+                                            class="absolute top-0 right-0 w-4 h-4 text-center text-xs rounded-full bg-[#3C4652] text-white ring-2 ring-white"
+                                        >
+                                            2
+                                        </p>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- profile image -->
+                            <div class="flex items-center space-x-4 px-6">
+                                <img src="../assets/setting/People6.png" alt="profile" class="w-14 h-14 rounded-full" />
+                                <div>
+                                    <p class="font-poppins font-medium text-[#585A65]">Meria Doo</p>
+                                    <p class="font-poppins text-sm text-[#BCBCBC]">Staff Collab</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- all messages -->
+                        <div class="p-5">
+                            <div class="border border-[#DBDBDB] rounded-xl">
+                                <div class="p-4 flex items-center justify-between">
+                                    <h1 class="text-2xl font-poppins font-semibold text-[#141721]">All Messages</h1>
+                                    <button>
+                                        <img src="../assets/setting/more.svg" alt="more" />
+                                    </button>
+                                </div>
+                                <!-- all messages -->
+                                <div class="px-4 space-y-4 h-72 overflow-y-scroll" id="leftdiv">
+                                    <!-- msg 1 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People2.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Jone doe</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Typing...</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">10 minutes ago</p>
+                                    </div>
+
+                                    <!-- msg 2 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People1.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Jimmy Fooa</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Lipsum Dolor Amet?</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">1 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 3 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People3.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Leoni Ambraz</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">How i can?</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">2 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 4 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People4.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Sam Urzia</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Typing...</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">3 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 5 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People5.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Jane Due</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Dos Li koziko.</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">4 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 4 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People4.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Com Urzia</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Typing...</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">7 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 5 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People5.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Jane lily</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Dos Li koziko.</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">8 hour agoo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- pinned messages -->
+                        <div class="p-5">
+                            <div class="border border-[#DBDBDB] rounded-xl">
+                                <div class="p-4 flex items-center justify-between">
+                                    <h1 class="text-2xl font-poppins font-semibold text-[#141721]">Pinned Messages</h1>
+                                    <button>
+                                        <img src="../assets/setting/more.svg" alt="more" />
+                                    </button>
+                                </div>
+                                <!-- all messages -->
+                                <div class="px-4 pb-4 space-y-4 h-72 overflow-y-scroll" id="leftdiv">
+                                    <!-- msg 1 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People2.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Jone doe</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Typing...</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">10 minutes ago</p>
+                                    </div>
+
+                                    <!-- msg 2 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People1.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Jimmy Fooa</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Lipsum Dolor Amet?</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">1 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 3 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People3.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Leoni Ambraz</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">How i can?</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">2 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 4 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People4.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Sam Urzia</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Typing...</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">3 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 5 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People5.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Jane Due</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Dos Li koziko.</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">4 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 4 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People4.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Com Urzia</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Typing...</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">7 hour agoo</p>
+                                    </div>
+
+                                    <!-- msg 5 -->
+                                    <div class="flex justify-between">
+                                        <div class="flex items-center gap-x-2">
+                                            <img src="../assets/setting/People5.png" alt="avater" class="w-9 h-9 rounded-full" />
+                                            <div>
+                                                <p class="text-[15px] text-[#585A65] font-medium font-poppins">Jane lily</p>
+                                                <p class="text-[13px] text-[#BCBCBC] font-poppins">Dos Li koziko.</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-[13px] text-[#87888E] font-medium font-poppins">8 hour agoo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div :class="!show ? 'hidden' : 'ml-5' " class="h-full bg-white">
+                        <div class="p-5 text-end" @click="show = false">
+                            <button>
+                                <img src="../assets/close.svg" alt="close" />
+                            </button>
+                        </div>
+                        <h1 class="px-5 text-center py-4 border-b border-[#EBEFF2] text-2xl font-poppins font-semibold text-[#141721]">Discussion</h1>
+                        <!-- chat body -->
+                        <div class="rounded-xl w-full">
+                            <!-- chat head -->
+                            <div class="px-5 py-3 flex items-center justify-between border-b border-[#EBEFF2]">
+                                <div class="flex items-center py-2 w-56">
+                                    <img src="../assets/setting/People5.png" alt="avatar" class="w-9 h-9 rounded-full" />
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <button>
+                                        <img src="../assets/chat/star.svg" alt="star" />
+                                    </button>
+                                    <button>
+                                        <img src="../assets/setting/more.svg" alt="more" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- messages -->
+                            <div class="px-5 py-3 h-[calc(100vh-33vh)] overflow-y-scroll" id="centerdiv">
+                                <!-- msg 1 -->
+                                <div class="flex items-end py-4 gap-x-2">
+                                    <div>
+                                        <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[95%]">
+                                            <p class="font-poppins text-[#585A65]">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                                euismod eros consectetur.
+                                            </p>
+                                        </div>
+                                        <div class="py-2 flex items-center gap-x-4">
+                                            <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Don</p>
+                                            <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                            <button>
+                                                <img src="../assets/setting/more.svg" alt="more" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- msg 2 -->
+                                <div class="flex items-end py-4 gap-x-2">
+                                    <div>
+                                        <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[95%]">
+                                            <p class="font-poppins text-[#585A65]">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                                euismod eros consectetur.
+                                            </p>
+                                        </div>
+                                        <div class="py-2 flex items-center gap-x-4">
+                                            <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Don</p>
+                                            <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                            <button>
+                                                <img src="../assets/setting/more.svg" alt="more" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- msg 3 -->
+                                <div class="flex flex-row-reverse items-end py-4 gap-x-2">
+                                    <div>
+                                        <div class="bg-[#2780A8] p-4 rounded-t-xl rounded-bl-xl flex justify-end">
+                                            <p class="font-poppins text-white">Ok Sure!! Lorem ipsum</p>
+                                        </div>
+                                        <div class="py-2 flex flex-row-reverse items-center gap-x-4">
+                                            <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                            <button>
+                                                <img src="../assets/setting/more.svg" alt="more" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- msg 4 -->
+                                <div class="flex items-end py-4 gap-x-2">
+                                    <div>
+                                        <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[95%]">
+                                            <p class="font-poppins text-[#585A65]">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                                euismod eros consectetur.
+                                            </p>
+                                        </div>
+                                        <div class="py-2 flex items-center gap-x-4">
+                                            <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Don</p>
+                                            <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                            <button>
+                                                <img src="../assets/setting/more.svg" alt="more" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- msg 1 -->
+                                <div class="flex items-end py-4 gap-x-2">
+                                    <div>
+                                        <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[95%]">
+                                            <p class="font-poppins text-[#585A65]">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                                euismod eros consectetur.
+                                            </p>
+                                        </div>
+                                        <div class="py-2 flex items-center gap-x-4">
+                                            <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Don</p>
+                                            <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                            <button>
+                                                <img src="../assets/setting/more.svg" alt="more" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- msg 2 -->
+                                <div class="flex items-end py-4 gap-x-2">
+                                    <div>
+                                        <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[95%]">
+                                            <p class="font-poppins text-[#585A65]">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                                euismod eros consectetur.
+                                            </p>
+                                        </div>
+                                        <div class="py-2 flex items-center gap-x-4">
+                                            <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Don</p>
+                                            <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                            <button>
+                                                <img src="../assets/setting/more.svg" alt="more" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- msg 3 -->
+                                <div class="flex flex-row-reverse items-end py-4 gap-x-2">
+                                    <div>
+                                        <div class="bg-[#2780A8] p-4 rounded-t-xl rounded-bl-xl flex justify-end">
+                                            <p class="font-poppins text-white">Ok Sure!! Lorem ipsum</p>
+                                        </div>
+                                        <div class="py-2 flex flex-row-reverse items-center gap-x-4">
+                                            <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                            <button>
+                                                <img src="../assets/setting/more.svg" alt="more" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- msg 4 -->
+                                <div class="flex items-end py-4 gap-x-2">
+                                    <div>
+                                        <div class="bg-[#EEF3F6] p-4 rounded-t-xl rounded-br-xl w-[95%]">
+                                            <p class="font-poppins text-[#585A65]">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sollicitudin elit non dui tempus, id
+                                                euismod eros consectetur.
+                                            </p>
+                                        </div>
+                                        <div class="py-2 flex items-center gap-x-4">
+                                            <p class="text-[15px] text-[#585A65] font-poppins font-medium">Jone Don</p>
+                                            <p class="text-[#87888E] text-[14px] font-poppins">3 days ago</p>
+                                            <button>
+                                                <img src="../assets/setting/more.svg" alt="more" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- send msg -->
+                            <div class="py-3 px-5 w-full flex items-center gap-x-3 sticky bottom-0">
+                                <label for="sendmsg" class="w-full">
+                                    <input
+                                        type="text"
+                                        class="p-3 border border-[#EBEFF2] font-poppins text-[15px] placeholder:text-[#AFB3B8] w-full rounded-lg focus:outline-[#2780A8]"
+                                        placeholder="Post goes here..."
+                                    />
+                                </label>
+
+                                <button class="text-white text-[15px] font-poppins py-3 px-5 rounded-lg bg-[#2780A8] active:bg-[#359fd0]">
+                                    Reply
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>
